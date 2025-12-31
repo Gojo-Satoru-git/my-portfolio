@@ -3,11 +3,14 @@ import './App.css';
 import TerminalLayout from './components/TerminalLayout';
 import HeroSection from './components/Hero';
 import Terminal from './components/Terminal';
+import TerminalWindow from './components/TerminalWindow';
 function App() {
   return (
     <TerminalLayout>
-      <HeroSection/>
-      <Terminal/>
+      <TerminalWindow>
+        <HeroSection />
+        <Terminal />
+      </TerminalWindow>
     </TerminalLayout>
   );
 }

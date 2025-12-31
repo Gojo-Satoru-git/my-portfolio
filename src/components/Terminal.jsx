@@ -1,10 +1,16 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { terminalReducer, initialState } from '../reducer/TerminalReducer';
 import TerminalLine from './TerminalLine';
 import Prompt from './Prompt';
 
 const Terminal = () => {
   const [state, dispatch] = useReducer(terminalReducer, initialState);
+  
+  const bottomRef = useRef(null);
+  useEffect(()=>{
+    bottomRef.current?.scrollIntoView({behavior:"smooth"});
+  },[state.history]);
+
   const executeCommand = () => {
     const cmd = state.input.trim().toLowerCase();
     let output = [];
@@ -47,7 +53,9 @@ const Terminal = () => {
         onChange={(e) => dispatch({ type: 'INPUT_CHANGE', payload: e.target.value })}
         onEnter={executeCommand}
       ></Prompt>
+      <div ref={bottomRef}/>
     </div>
+    
   );
 };
 
