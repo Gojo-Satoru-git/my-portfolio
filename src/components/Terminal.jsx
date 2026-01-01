@@ -1,20 +1,45 @@
-import { useEffect, useReducer, useRef } from 'react';
+import { useContext, useEffect, useReducer, useRef } from 'react';
 import { terminalReducer, initialState } from '../reducer/TerminalReducer';
 import TerminalLine from './TerminalLine';
 import Prompt from './Prompt';
+import { scrollContext } from '../contexts.jsx/scrollContext';
 
 const Terminal = () => {
   const [state, dispatch] = useReducer(terminalReducer, initialState);
-  
+  const { skillsRef, projectsRef } = useContext(scrollContext);
+  const scrollTo = (ref) => {
+    if (!ref?.current) {
+      console.warn('Scroll target ref is null or undefined', ref);
+      return;
+    }
+    setTimeout(() => {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+      console.log('Scrolled to:', ref.current);
+    }, 50);
+  };
+
   const bottomRef = useRef(null);
-  useEffect(()=>{
-    bottomRef.current?.scrollIntoView({behavior:"smooth"});
-  },[state.history]);
+  const shouldScrollRef = useRef(false);
+
+  useEffect(() => {
+    if (shouldScrollRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      shouldScrollRef.current = false;
+    }
+  }, [state.history]);
+
+  const commandsList = ['help', 'whoami', 'skills', 'projects', 'clear'];
+  const handleTab = () => {
+    const match = commandsList.find((c) => c.startsWith(state.input));
+    if (match) {
+      dispatch({ type: 'INPUT_CHANGE', payload: match });
+    }
+  };
 
   const executeCommand = () => {
     const cmd = state.input.trim().toLowerCase();
     let output = [];
-
+    let isValidCommand = true;
     switch (cmd) {
       case 'help':
         output = [
@@ -26,11 +51,13 @@ const Terminal = () => {
         output = [{ type: 'output', text: 'Praveen Kumar C' }];
         break;
       case 'skills':
-        output = [{ type: 'output', text: 'Java, React, DSA, OS, DBMS' }];
+        scrollTo(skillsRef);
+        output = [{ type: 'output', text: 'Opening Skills...' }];
         break;
 
       case 'projects':
-        output = [{ type: 'output', text: 'Hostel Outpass Management System' }];
+        scrollTo(projectsRef);
+        output = [{ type: 'output', text: 'Opening Projects..' }];
         break;
 
       case 'clear':
@@ -39,8 +66,10 @@ const Terminal = () => {
 
       default:
         output = [{ type: 'output', text: `Command not found: ${cmd}` }];
+        isValidCommand = false;
     }
 
+    shouldScrollRef.current = isValidCommand;
     dispatch({ type: 'EXECUTE_COMMAND', payload: output });
   };
   return (
@@ -52,10 +81,12 @@ const Terminal = () => {
         value={state.input}
         onChange={(e) => dispatch({ type: 'INPUT_CHANGE', payload: e.target.value })}
         onEnter={executeCommand}
+        onUp={() => dispatch({ type: 'HISTORY_UP' })}
+        onDown={() => dispatch({ type: 'HISTORY_DOWN' })}
+        onTab={handleTab}
       ></Prompt>
-      <div ref={bottomRef}/>
+      <div ref={bottomRef} />
     </div>
-    
   );
 };
 
