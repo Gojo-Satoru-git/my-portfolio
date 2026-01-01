@@ -3,8 +3,8 @@ import Cursor from './Cursor';
 
 const HeroSection = () => {
   const cmd = 'whoami';
-  const nme = 'Praveen Kumar C';
-  const edu = 'B.Tech AI & Data Science';
+  const nme = 'Hello, Im Praveen Kumar';
+  const edu = 'An Undergraduate B.Tech AI & Data Science student';
   const tgline = 'Software Engineer in progress';
 
   const command = useTypewriter(cmd, 100);
@@ -15,7 +15,7 @@ const HeroSection = () => {
   return (
     <section className="flex flex-col justify-center">
       <p className="text-green-500">
-        $ {command}
+        praveen@portfolio $ {command}
         {command.length < cmd.length && <Cursor />}
       </p>
 

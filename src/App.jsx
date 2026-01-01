@@ -12,22 +12,20 @@ function App() {
   const skillsRef = useRef(null);
   useEffect(() => window.scrollTo(0, 0), []);
   return (
-    <>
-      <scrollContext.Provider value={{ skillsRef, projectsRef }}>
+    <div >
         <TerminalLayout>
           <TerminalWindow>
             <HeroSection />
-            <Terminal />
+            <Terminal skillsRef={skillsRef}  projectsRef={projectsRef}/>
           </TerminalWindow>
         </TerminalLayout>
-        <div ref={skillsRef}>
+        <div ref={skillsRef} className='bg-transparent'>
           <Skills />
         </div>
         <div ref={projectsRef} className="border border-3">
           <Projects />
         </div>
-      </scrollContext.Provider>
-    </>
+    </div>
   );
 }
 

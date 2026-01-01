@@ -4,9 +4,8 @@ import TerminalLine from './TerminalLine';
 import Prompt from './Prompt';
 import { scrollContext } from '../contexts.jsx/scrollContext';
 
-const Terminal = () => {
+const Terminal = ({skillsRef,projectsRef}) => {
   const [state, dispatch] = useReducer(terminalReducer, initialState);
-  const { skillsRef, projectsRef } = useContext(scrollContext);
   const scrollTo = (ref) => {
     if (!ref?.current) {
       console.warn('Scroll target ref is null or undefined', ref);
@@ -19,14 +18,6 @@ const Terminal = () => {
   };
 
   const bottomRef = useRef(null);
-  const shouldScrollRef = useRef(false);
-
-  useEffect(() => {
-    if (shouldScrollRef.current) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-      shouldScrollRef.current = false;
-    }
-  }, [state.history]);
 
   const commandsList = ['help', 'whoami', 'skills', 'projects', 'clear'];
   const handleTab = () => {
@@ -39,7 +30,6 @@ const Terminal = () => {
   const executeCommand = () => {
     const cmd = state.input.trim().toLowerCase();
     let output = [];
-    let isValidCommand = true;
     switch (cmd) {
       case 'help':
         output = [
@@ -66,10 +56,7 @@ const Terminal = () => {
 
       default:
         output = [{ type: 'output', text: `Command not found: ${cmd}` }];
-        isValidCommand = false;
     }
-
-    shouldScrollRef.current = isValidCommand;
     dispatch({ type: 'EXECUTE_COMMAND', payload: output });
   };
   return (

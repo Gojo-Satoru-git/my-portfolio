@@ -8,7 +8,7 @@ const Prompt = ({ value, onChange, onEnter, onUp, onDown, onTab }) => {
         onChange={onChange}
         onKeyDown={(e) => {
           if (e.key === 'Enter'){ 
-            document.activeElement?.blur();
+            //document.activeElement?.blur();
             onEnter();
           }
           if (e.key === 'ArrowUp') {
